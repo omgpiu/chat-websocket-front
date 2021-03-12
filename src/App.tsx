@@ -1,8 +1,20 @@
 import React, {useState} from 'react';
+import oi from 'socket.io-client'
 import './App.css';
+
+
+const socket = oi('http://localhost:3009')
+
 
 function App() {
 
+    //
+    // useEffect(() => {
+    //     // let socket = oi('https://samurai-chat-back.herokuapp.com/')
+    //
+    // }, [])
+
+    const [message, setMessage] = useState('Hello')
     const [messages, setMessages] = useState([{
         message: 'hello Sasha',
         id: '123',
@@ -36,7 +48,7 @@ function App() {
                 {messages.map(e => {
 
                     return (
-                        <div>
+                        <div key={e.id + e.user.name}>
                             <div>
                                 {e.message}
                             </div>
@@ -51,8 +63,13 @@ function App() {
 
             </div>
             <div>
-                <textarea></textarea>
-                <button>Send</button>
+                <textarea value={message} onChange={(e) => setMessage(e.currentTarget.value)}/>
+                <button onClick={() => {
+                    socket.emit('client-message-sent', message)
+                    setMessage('')
+
+                }}>Send
+                </button>
             </div>
         </div>
     );
